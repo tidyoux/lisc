@@ -49,7 +49,7 @@ func parsePair(data []rune, pair *Pair) (*Pair, int, error) {
 					value = NewBool(false)
 					k = 5
 				} else {
-					return nil, 0, fmt.Errorf("parse pair failed, invalid format")
+					return nil, 0, fmt.Errorf("parse pair failed, invalid format, near: %s", near(data[i:]))
 				}
 			} else {
 				var key string
@@ -61,7 +61,7 @@ func parsePair(data []rune, pair *Pair) (*Pair, int, error) {
 		}
 
 		if err != nil {
-			return nil, 0, err
+			return nil, 0, fmt.Errorf("%v, near: %s", err, near(data[i:]))
 		}
 
 		if value != nil {
@@ -130,4 +130,12 @@ func parseString(data []rune) (*String, int, error) {
 		}
 	}
 	return nil, 0, fmt.Errorf("parse string failed, can't find end tag")
+}
+
+func near(data []rune) string {
+	const nearSize = 10
+	if len(data) > nearSize {
+		data = data[:nearSize]
+	}
+	return string(data)
 }
